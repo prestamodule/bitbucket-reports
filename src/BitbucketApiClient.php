@@ -56,6 +56,36 @@ class BitbucketApiClient
         return Uuid::fromString($resultBody['uuid']);
     }
 
+    public function addAnnotationsBulk(
+        UuidInterface $reportUuid,
+        array $annotations
+    ): array {
+        $payload = [];
+
+        foreach ($annotations as $annotation) {
+            $annotationPayload = [
+                'annotation_type' => 'BUG',
+                'summary' => $annotation['summary'],
+            ];
+
+            if (isset($annotation['path'])) {
+                $annotationPayload['path'] = $this->relativePathHelper->getRelativePath($annotation['path']);
+            }
+
+            if (isset($annotation['line'])) {
+                $annotationPayload['line'] = $annotation['line'];
+            }
+
+            $payload[] = $annotationPayload;
+        }
+
+        $response = $this->httpClient->post($this->buildAnnotationsBulkUrl($reportUuid), [
+            RequestOptions::JSON => $payload,
+        ]);
+
+        return json_decode((string) $response->getBody(), true);
+    }
+
     public function addAnnotation(
         UuidInterface $reportUuid,
         string $summary,
@@ -92,6 +122,14 @@ class BitbucketApiClient
             BitbucketConfig::repoSlug(),
             BitbucketConfig::commit(),
             $uuid !== null ? '{'.$uuid->toString().'}' : $this->buildReportName()
+        );
+    }
+
+    private function buildAnnotationsBulkUrl(UuidInterface $reportUuid): string
+    {
+        return sprintf(
+            '%s/annotations',
+            $this->buildReportUrl($reportUuid),
         );
     }
 
