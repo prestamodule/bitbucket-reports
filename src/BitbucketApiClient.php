@@ -64,6 +64,7 @@ class BitbucketApiClient
 
         foreach ($annotations as $annotation) {
             $annotationPayload = [
+                'external_id' => $this->buildAnnotationName(),
                 'annotation_type' => 'BUG',
                 'summary' => $annotation['summary'],
             ];
