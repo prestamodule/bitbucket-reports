@@ -79,11 +79,17 @@ class BitbucketApiClient
             $payload[] = $annotationPayload;
         }
 
-        $response = $this->httpClient->post($this->buildAnnotationsBulkUrl($reportUuid), [
-            RequestOptions::JSON => $payload,
-        ]);
+        // Since BitBucket only allows batches of a 100 annotations at a time, chunk the array accordingly
+        $chunkedResponse = [];
+        foreach (array_chunk($payload, 100) as $chunk) {
+            $response = $this->httpClient->post($this->buildAnnotationsBulkUrl($reportUuid), [
+                RequestOptions::JSON => $chunk,
+            ]);
 
-        return json_decode((string) $response->getBody(), true);
+            array_merge($chunkedResponse, json_decode((string) $response->getBody(), true));
+        }
+
+        return $chunkedResponse;
     }
 
     public function addAnnotation(
