@@ -26,6 +26,8 @@ class BitbucketApiClient
     {
         $this->httpClient = new Client([
             'base_uri' => $baseUrl,
+            // Set base_url for old Guzzle versions (in case we already have a version installed by the project we test on)
+            'base_url' => $baseUrl,
             RequestOptions::PROXY => $proxyUrl,
         ]);
         $this->relativePathHelper = new ParentDirectoryRelativePathHelper(BitbucketConfig::cloneDir());
