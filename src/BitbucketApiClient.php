@@ -18,9 +18,9 @@ class BitbucketApiClient
 
     private const PROXY_URL = 'http://localhost:29418';
 
-    private Client $httpClient;
+    private $httpClient;
 
-    private ParentDirectoryRelativePathHelper $relativePathHelper;
+    private $relativePathHelper;
 
     public function __construct(string $baseUrl = self::BASE_URL, string $proxyUrl = self::PROXY_URL)
     {
@@ -142,7 +142,7 @@ class BitbucketApiClient
     {
         return sprintf(
             '%s/annotations',
-            $this->buildReportUrl($reportUuid),
+            $this->buildReportUrl($reportUuid)
         );
     }
 

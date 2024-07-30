@@ -9,8 +9,11 @@ namespace Swis\Bitbucket\Reports;
  */
 class ParentDirectoryRelativePathHelper
 {
-    public function __construct(private string $parentDirectory)
+    private $parentDirectory;
+
+    public function __construct(string $parentDirectory)
     {
+        $this->parentDirectory = $parentDirectory;
     }
 
     public function getRelativePath(string $filename): string
